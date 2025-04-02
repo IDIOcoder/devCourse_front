@@ -128,6 +128,13 @@ const quizReduce = () => {
 }
 quizReduce();
 
+const studyJoin = () => {
+  const arr = ['a', 'b', 'c', 'd'];
+  console.dir(arr.join('****'));
+}
+
+studyJoin();
+
 // 유사배열객채
 // length 속성이 있다.
 // 객체의 속성이 index 이다.
