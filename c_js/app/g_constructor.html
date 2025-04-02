@@ -32,17 +32,7 @@
     //   Student 인스턴스의 모든 속성을 출력할 수 있도록 toString 을 오버라이드 하시오.
     //   Student 의 프로토타입객체 속성도 출력되어야 합니다.
     //   Student 를 자식객체의 속성도 출력되어야 합니다.
-    this.toString = function(){
-
-        let arr = [];
-
-        for(const key in this){
-            arr.push(`${key} : ${this[key]}`);
-        }
-
-        arr.sort();
-        return arr.join(' ,\n ');
-    }
+    
 
     console.log('Exam 함수 호출');
   }
