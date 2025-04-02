@@ -1,3 +1,25 @@
+let top1 = {
+  title : '소년이 온다',
+  awards : ['노벨문학상', '이상문학상'],
+  category : {depth1: '문학', depth2: '소설'},
+  'categoryCode':12,
+}
+
+let top2 = {
+  title : '당신의 이름을 지어다가 며칠은 먹었다',
+  awards : ['젊은 예술가상'],
+  category : {depth1: '문학', depth2: '시'},
+  'categoryCode':12,
+}
+
+let top3 = {
+  title : 'Object',
+  awards : [],
+  category : {depth1: '기술', depth2: 'IT'},
+  'categoryCode':15,
+}
+
+
 // C
 // 배열의 가장 뒤에 요소를 추가
 const studyPush = () => {
@@ -52,27 +74,6 @@ const studyDelete = () => {
   console.log(arr);
 }
 
-let top1 = {
-  title : '소년이 온다',
-  awards : ['노벨문학상', '이상문학상'],
-  category : {depth1: '문학', depth2: '소설'},
-  'categoryCode':12,
-}
-
-let top2 = {
-  title : '당신의 이름을 지어다가 며칠은 먹었다',
-  awards : ['젊은 예술가상'],
-  category : {depth1: '문학', depth2: '시'},
-  'categoryCode':12,
-}
-
-let top3 = {
-  title : 'Object',
-  awards : [],
-  category : {depth1: '기술', depth2: 'IT'},
-  'categoryCode':15,
-}
-
 // map filter reduce
 const studyMap = () => {
   const arr = [1,2,3,4,5,6];
@@ -118,4 +119,28 @@ studyReduce();
 // reduce 를 사용해 구현
 const quizReduce = () => {
   const arr = [1,2,3,4,5,6];
+  const res = arr.reduce((acc , cur) => {
+    acc.push(cur * 10);
+    return acc;
+  }, [])
+
+  console.log(res);
 }
+quizReduce();
+
+// 유사배열객채
+// length 속성이 있다.
+// 객체의 속성이 index 이다.
+const similarArray = {
+  0: 'hi',
+  1: 'hello',
+  2: 'bye',
+  length: 3
+}
+
+const studySimilarArray = () => {
+  const arr = Array.from(similarArray);
+  arr.forEach(e => console.log(e));
+}
+
+studySimilarArray();
