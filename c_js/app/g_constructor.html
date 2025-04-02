@@ -18,6 +18,7 @@
 </pre>
 
 <script>
+
   function Exam(academy, username, kor, eng, math){
     this.academy = academy;
     this.username = username;
@@ -67,6 +68,11 @@
     length: 3
   }
 
+  // similarArray.__proto__ = []
+  // [].__proto__ = Array.prototype
+  // Array.prototype.__proto__ = object
+
+  // similarArray 의 proto chain : [], Array.prototype, object
   similarArray.__proto__ = [];
   console.log(similarArray);
   similarArray.forEach(e => console.log(e));
