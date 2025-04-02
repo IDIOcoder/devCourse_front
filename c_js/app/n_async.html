@@ -50,6 +50,11 @@
 
   const counter = (name, count) => {
     return new Promise((resolve, reject) => {
+      if(count < 0){
+        reject(new Error('count 는 음수일 수 없습니다.'));
+        return;
+      }
+
       setTimeout(()=>{
         console.log(name, count);
         resolve(++count);
@@ -57,13 +62,40 @@
     });
   };
 
-  const test = counter('hmd', 1)
-  .then(count => counter('hmd', count))
-  .then(count => counter('hmd', count))
-  .then(count => counter('hmd', count));
+  const studyPromise = async () => {
+    return counter('hmd', 1)
+    .then(count => counter('hmd', count))
+    .then(count => counter('hmd', count))
+    .catch(error => console.error(error))
+    .finally(() => console.log('finally'));
+  }
 
-  console.log(test);
+  // async / await
+  //  함수 앞에 async 키워드 추가
+  //  async 함수는 promise 를 반환한다.
+  // await : async 함수 안에서 사용가능한 키워드. Promise 를 반환하는 함수를 호출 할 때 사용
+  //         Promise 의 result 값을 반환
+  const asyncCount = async (count) => {
+    try{
+      for (let i = 1; i <= count; i++) {
+        await counter('하명도', i);
+      }
+    } catch (error){
+      console.error(error);
+    }finally {
+      console.log('finally');
+    }
+  }
 
+  // PromiseAll, PromiseAllSettled
+  const promiseAll = async () => {
+    // 다음 로직이 studyPromise, asyncCount 의 결과에 의존하는 로직
+    const results = await Promise.allSettled([studyPromise(), asyncCount(2)]);
+    console.log(results);
+    console.log('다음 로직을 수행해볼까?');
+  }
+
+  promiseAll();
 
 
 
