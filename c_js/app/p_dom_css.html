@@ -18,20 +18,23 @@
   <script>
     const btns = document.querySelectorAll('.btn');
     btns.forEach( e => {
+      e.style.transform = 'rotate(0turn)';
       e.addEventListener('mouseover', ev => {
         // element 객체의 style 속성으로 css 를 제어할 수 있다.
         // kebab-case(두 단어를 - 연결) 를 camelCase 로 변경
         // ex) background-color => backgroundColor
         const target = ev.target;
         target.style.backgroundColor = 'red';
-        target.style.transitionDuration = '3s';
-        target.style.borderRadius = '100%';
+        target.style.transform = 'rotate(20turn)';
+        target.style.transitionDuration = '2s';
+        target.style.borderRadius = '50px';
       })
 
       e.addEventListener('mouseout', ev => {
         const target = ev.target;
         target.style.backgroundColor = null;
         target.style.borderRadius = null;
+        target.style.transform = 'rotate(0turn)';
       });
     });
   </script>
