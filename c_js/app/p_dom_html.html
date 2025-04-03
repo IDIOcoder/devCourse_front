@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link href="./assets/css/button.css" rel="stylesheet">
+  <style>
+    .note{
+      border: thin solid;
+      min-height: 100px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>DOM</h1>
+<h2>textNode 가 없는 element 추가 삭제</h2>
+<div id="note1" class="note">
+
+</div>
+<button class="btn btn-red btn-l" id="btnAdd">add </button>
+<script>
+  const btnAdd = document.querySelector('#btnAdd');
+  const btnRemove = document.querySelector('#btnRemove');
+  btnAdd.addEventListener('click', ev => {
+    const imgElement = document.createElement('img');
+    imgElement.src='./assets/img/html.jpg';
+    document.querySelector('#note1').appendChild(imgElement);
+  });
+
+</script>
+
+</body>
+</html>
+    
+    
+    
