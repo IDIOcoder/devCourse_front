@@ -1,6 +1,10 @@
-import {api} from './module/unsplash.js';
+import getToken from './module/unsplash.js';
 
 (async () => {
-  const response = await api();
-  console.dir(response);
+  const token = await getToken();
+  const body = document.querySelector('body');
+  const locationName = document.querySelector('#locationName');
+  body.style.backgroundImage = `url(${token.bg})`;
+  locationName.textContent = token.location;
 })();
+
