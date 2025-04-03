@@ -4,16 +4,16 @@ const options = {
   maximumAge: 0,
 };
 
-function success(pos) {
-  const crd = pos.coords;
-  console.log("Your current position is:");
-  console.log(`Latitude : ${crd.latitude}`);
-  console.log(`Longitude: ${crd.longitude}`);
-  console.log(`More or less ${crd.accuracy} meters.`);
-}
+const api = () => {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const crd = pos.coords;
+      resolve({latitude: crd.latitude, longitude: crd.longitude});
+    }, err => {
+      reject(err);
+    }, options);
+  });
+};
 
-function error(err) {
-  console.warn(`ERROR(${err.code}): ${err.message}`);
-}
+export default api;
 
-navigator.geolocation.getCurrentPosition(success, error, options);

@@ -14,6 +14,7 @@
   defer : dom 객체가 모두 올라간 뒤 script 파일 실행
   async : dom 객체 파싱과 script 파일 실행이 동시에 진행
 -->
+  <script src="./assets/js/first.js"></script>
   <script defer type="module" src="./assets/js/qrcode.js"></script>
 
   <!--
@@ -27,7 +28,8 @@
   -->
 </head>
 <body>
-<div class="header con-end">
+<div class="header con-between">
+  <div class="weather" id="weather"></div>
   <div class="logo"><i class="fa-solid fa-qrcode"></i></div>
 </div>
 <div class="section con">
