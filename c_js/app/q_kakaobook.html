@@ -32,10 +32,10 @@
 <header>
   <nav>
     <div class="nav-wrapper">
-      <a href="#" class="brand-logo">
+      <a href="#" class="brand-logo" id="mic">
         <i class="small material-icons"
            style="font-size: 3rem; margin-left: 10px"
-        >import_contacts</i>
+        >mic</i>
       </a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
         <li><a href="sass.html">Sass</a></li>
@@ -56,7 +56,7 @@
         <th>author</th>
       </tr>
       </thead>
-      <tbody id="bookList" >
+      <tbody id="bookList">
 
       </tbody>
     </table>
@@ -64,7 +64,7 @@
 </main>
 
 <footer class="page-footer">
-  <div class="container" >
+  <div class="container">
     <div class="row">
       <div class="col l6 s12">
         <h5 class="white-text">Footer Content</h5>
@@ -102,12 +102,42 @@
 
 <script type="module">
   import api from './assets/js/module/kakaobook.js'
+  import lodashEs from 'https://cdn.jsdelivr.net/npm/lodash-es@4.17.21/+esm'
+  import Speech from './assets/js/module/speech.js';
 
-  const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+  let lastSearch = '';
+  let lastPage = 1;
 
-  const recognition = new SpeechRecognition();
-  recognition.continuous = true;
+  const speech = new Speech(ev => {
+    const results = ev.results;
+    let text = results[results.length - 1][0].transcript.trim();
+
+    if (text.startsWith('검색')) {
+      lastSearch = text.replace('검색', '');
+      renderBooks(lastSearch);
+    }
+
+    if (text === '다음') renderBooks(lastSearch, ++lastPage);
+    if (text === '이전') renderBooks(lastSearch, --lastPage);
+    if (text === '설명') {
+      const desc = bookList.firstElementChild.dataset.desc;
+      speech.speak(desc);
+    }
+  });
+
+  speech.recognize();
+
+  mic.addEventListener('click', lodashEs.throttle(ev => {
+        const text = ev.target.textContent;
+        if (text === 'mic') {
+          speech.stop();
+          ev.target.textContent = 'mic_off';
+        } else {
+          speech.recognize();
+          ev.target.textContent = 'mic';
+        }
+      }, 5000)
+  );
 
   bookList.addEventListener('mouseover', ev => {
     // ev.target : 실제 이벤트가 발생한 대상
@@ -120,90 +150,36 @@
     ev.stopPropagation();
   });
 
-  (async () => {
-    recognition.start();
-    recognition.addEventListener('speechend', ev => {
-      recognition.stop();
-    });
-
-    let lastSearch = '';
-    let lastPage = 1;
-
-    recognition.addEventListener('result', ev => {
-      const results = ev.results;
-      let text = results[results.length-1][0].transcript;
-      text = text.trim();
-
-      if(text.startsWith('검색')){
-        const searchKeyword = text.replace('검색', '');
-        lastSearch = searchKeyword;
-        renderBooks(searchKeyword);
-        return;
-      }
-
-      if(text === '다음'){
-        renderBooks(lastSearch, ++lastPage);
-        return;
-      }
-
-      if(text === '이전'){
-        renderBooks(lastSearch, --lastPage);
-      }
-
-      if(text === '설명'){
-        const synth = window.speechSynthesis;
-        const desc = bookList.firstElementChild.dataset.desc;
-
-        const utterThis = new SpeechSynthesisUtterance(desc);
-        utterThis.pitch = 0.5;
-        utterThis.rate = 1;
-
-        utterThis.addEventListener('end', ev => {
-          console.log("SpeechSynthesisUtterance.onend");
-        });
-
-        utterThis.addEventListener('error', ev => {
-          console.dir(ev);
-          console.error("SpeechSynthesisUtterance.onerror");
-        });
-
-        synth.speak(utterThis);
-      }
-    });
-
-    const renderBooks = async (query, page) => {
-
-      if(page < 1) {
-        alert('첫 페이지 입니다.')
-      }
-
-      const params = {
-        query: query,
-        size: 2,
-        page: page
-      }
-
-      const { meta, documents } = await api(params);
-
-      if(meta['is_end'] && documents.length === 0){
-        alert('마지막 페이지 입니다.');
-        return;
-      }
-
-      bookList.innerHTML = '';
-
-      documents.forEach((e, idx) => {
-        const clone = bookTemplate.cloneNode(true);
-        clone.id = `bookRow${idx}`;
-        clone.querySelector('.book-thumb').src = e.thumbnail;
-        clone.querySelector('.book-tit').textContent = e.title;
-        clone.querySelector('.book-author').textContent = e.authors.join('\n');
-        clone.dataset.desc = e.contents;
-        bookList.appendChild(clone);
-      });
+  const renderBooks = async (query, page) => {
+    if (page < 1) {
+      alert('첫 페이지 입니다.')
     }
-  })();
 
+    const params = {
+      query: query,
+      size: 2,
+      page: page
+    }
+
+    const {meta, documents} = await api(params);
+
+    if (meta['is_end'] && documents.length === 0) {
+      alert('마지막 페이지 입니다.');
+      return;
+    }
+
+    bookList.innerHTML = '';
+
+    documents.forEach((e, idx) => {
+      const clone = bookTemplate.cloneNode(true);
+      clone.id = `bookRow${idx}`;
+      clone.querySelector('.book-thumb').src = e.thumbnail;
+      clone.querySelector('.book-tit').textContent = e.title;
+      clone.querySelector('.book-author').textContent = e.authors.join('\n');
+      clone.dataset.desc = e.contents;
+      bookList.appendChild(clone);
+    });
+  }
 
 </script>
 
