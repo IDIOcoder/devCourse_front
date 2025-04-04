@@ -107,10 +107,13 @@
 
   let lastSearch = '';
   let lastPage = 1;
+  let speechList = [];
 
   const speech = new Speech(ev => {
     const results = ev.results;
     let text = results[results.length - 1][0].transcript.trim();
+    speechList.push(text);
+    console.dir(speechList);
 
     if (text.startsWith('검색')) {
       lastSearch = text.replace('검색', '');
