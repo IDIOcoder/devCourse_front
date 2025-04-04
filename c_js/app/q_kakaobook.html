@@ -103,6 +103,12 @@
 <script type="module">
   import api from './assets/js/module/kakaobook.js'
 
+  const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  const recognition = new SpeechRecognition();
+  recognition.continuous = true;
+
   bookList.addEventListener('mouseover', ev => {
     // ev.target : 실제 이벤트가 발생한 대상
     ev.target.parentElement.style.backgroundColor = 'lightyellow';
@@ -114,36 +120,67 @@
     ev.stopPropagation();
   });
 
-  document.querySelector('main').addEventListener('mouseover', ev => {
-    // ev.target : 실제 이벤트가 발생한 대상
-    ev.target.style.backgroundColor = 'lightyellow';
-    ev.stopPropagation();
-  });
-
-  document.querySelector('main').addEventListener('mouseout', ev => {
-    // ev.target : 실제 이벤트가 발생한 대상
-    ev.target.style.backgroundColor = null;
-    ev.stopPropagation();
-  });
-
-  document.querySelector('body').addEventListener('mouseover', ev => {
-    // ev.target : 실제 이벤트가 발생한 대상
-    ev.target.style.backgroundColor = 'lightyellow';
-    ev.stopPropagation();
-  });
-
-  document.querySelector('body').addEventListener('mouseout', ev => {
-    // ev.target : 실제 이벤트가 발생한 대상
-    ev.target.style.backgroundColor = null;
-    ev.stopPropagation();
-  });
-
   (async () => {
-    const renderBooks = async () => {
+    recognition.start();
+    recognition.addEventListener('speechend', ev => {
+      recognition.stop();
+    });
+
+    let lastSearch = '';
+    let lastPage = 1;
+
+    recognition.addEventListener('result', ev => {
+      const results = ev.results;
+      let text = results[results.length-1][0].transcript;
+      text = text.trim();
+
+      if(text.startsWith('검색')){
+        const searchKeyword = text.replace('검색', '');
+        lastSearch = searchKeyword;
+        renderBooks(searchKeyword);
+        return;
+      }
+
+      if(text === '다음'){
+        renderBooks(lastSearch, ++lastPage);
+        return;
+      }
+
+      if(text === '이전'){
+        renderBooks(lastSearch, --lastPage);
+      }
+
+      if(text === '설명'){
+        const synth = window.speechSynthesis;
+        const desc = bookList.firstElementChild.dataset.desc;
+
+        const utterThis = new SpeechSynthesisUtterance(desc);
+        utterThis.pitch = 0.5;
+        utterThis.rate = 1;
+
+        utterThis.addEventListener('end', ev => {
+          console.log("SpeechSynthesisUtterance.onend");
+        });
+
+        utterThis.addEventListener('error', ev => {
+          console.dir(ev);
+          console.error("SpeechSynthesisUtterance.onerror");
+        });
+
+        synth.speak(utterThis);
+      }
+    });
+
+    const renderBooks = async (query, page) => {
+
+      if(page < 1) {
+        alert('첫 페이지 입니다.')
+      }
+
       const params = {
-        query: '해리포터',
+        query: query,
         size: 2,
-        page: 1
+        page: page
       }
 
       const { meta, documents } = await api(params);
@@ -152,6 +189,8 @@
         alert('마지막 페이지 입니다.');
         return;
       }
+
+      bookList.innerHTML = '';
 
       documents.forEach((e, idx) => {
         const clone = bookTemplate.cloneNode(true);
@@ -162,16 +201,8 @@
         clone.dataset.desc = e.contents;
         bookList.appendChild(clone);
       });
-
-
     }
-
-    await renderBooks();
-
-
-
-
-  })()
+  })();
 
 
 </script>
