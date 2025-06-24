@@ -1,18 +1,26 @@
-import authApi from "../api/authApi";
+import authApi from "../api/AuthApi";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import useAuthStore from "../stores/AuthStore";
 
 export default function Login(){
 
+  const {login} = useAuthStore();
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
 
   async function loginHandler(ev){
     ev.preventDefault()
-    const response = await authApi.login(username, password);
-    console.dir(response)
-    navigate("/")
+    try{
+      const response = await authApi.loginApi(username, password);
+      const decoded = jwtDecode(response.data.accessToken);
+      login(decoded, response.data.accessToken)
+      navigate("/")
+    }catch (e){
+      alert('아이디나 비밀번호가 틀렸습니다.')
+    }
   }
 
   return (
