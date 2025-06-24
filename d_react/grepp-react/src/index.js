@@ -4,7 +4,7 @@ import "./styles.css";
 import App from "./App";
 import "materialize-css/dist/css/materialize.min.css";
 import "materialize-css/dist/js/materialize.min.js";
-import '@mdi/font/css/materialdesignicons.min.css'
+import 'material-icons/iconfont/material-icons.css';
 import {BrowserRouter} from "react-router-dom";
 
 const root = createRoot(document.getElementById("root"));

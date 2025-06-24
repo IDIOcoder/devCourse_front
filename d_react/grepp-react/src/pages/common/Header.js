@@ -1,5 +1,4 @@
 export default function Header(){
-
   return (
       <header className="header">
         <nav className="navbar white">
@@ -13,8 +12,8 @@ export default function Header(){
               </li>
               <li>
                 <a href="mobile.html">
-                  <i className="mdi mdi-dots-vertical grey-text sidenav-trigger"
-                     data-target="slide-out"></i>
+                  <i className="material-icons grey-text sidenav-trigger"
+                     data-target="slide-out">more_vert</i>
                 </a>
               </li>
             </ul>
