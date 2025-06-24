@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import useGameStore from "../stores/GameStore";
 
 function Square({value, onSquareClick }) {
@@ -6,9 +6,29 @@ function Square({value, onSquareClick }) {
 }
 
 export default function Game(){
+  // react 의 hook 은 컴포넌트의 최상위 레벨에 존재해야한다. 조건문, 반복문, 함수안에서 사용 불가
   const {history, setHistory, currentMove, setCurrentMove} = useGameStore()
   const currentSquares = history[currentMove]
   const xIsNext = currentMove % 2 === 0
+  const winner = calculateWinner(currentSquares)
+  const timer = useRef();
+
+  useEffect(() => {
+    let timerId;
+    let count = 1;
+
+    if(!winner){
+      timerId = setInterval(() => {
+        timer.current.textContent= count++ + '초'
+      }, 1000)
+    }
+
+    // 클린업 함수 : 컴포넌트 언마운트 또는 deps 의 요소가 변경되어 다시 실행되기 전 호출
+    return () => {
+      console.log('게임 컴포넌트가 정리됩니다.')
+      clearInterval(timerId)
+    }
+  }, [winner]);
 
   function handlePlay(nextSquares){
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
@@ -31,23 +51,28 @@ export default function Game(){
   })
 
   return (
-      <div className="game">
-        <div className="game-board">
-          <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
+      <>
+        <h3 id="timer" ref={timer}>Timer</h3>
+        <div className="game">
+          <div className="game-board">
+            <Board xIsNext={xIsNext} squares={currentSquares}
+                   onPlay={handlePlay}/>
+          </div>
+          <div className="game-info">
+            <ol>{moves}</ol>
+          </div>
         </div>
-        <div className="game-info">
-          <ol>{moves}</ol>
-        </div>
-      </div>
+      </>
+
   );
 }
 
 function Board({xIsNext, squares, onPlay}) {
   const winner = calculateWinner(squares);
   let status;
-  if(winner){
+  if (winner) {
     status = winner + " is win!!"
-  }else{
+  } else {
     status = "next player is " + (xIsNext ? 'X' : 'O')
   }
 
