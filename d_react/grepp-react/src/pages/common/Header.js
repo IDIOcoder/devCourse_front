@@ -6,7 +6,7 @@ export default function Header(){
             <a href="/" className="brand-logo grey-text">Grepp</a>
             <ul id="nav-mobile"
                 className="right hide-on-med-and-down grey-text">
-              <li><a href="/member/signin" className="grey-text">sign in</a>
+              <li><a href="/login" className="grey-text">sign in</a>
               </li>
               <li><a href="/member/signup" className="grey-text">sign up</a>
               </li>
